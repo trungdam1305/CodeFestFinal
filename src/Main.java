@@ -19,7 +19,7 @@ import java.util.List;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server.jsclub.dev";
-    private static final String GAME_ID = "150815";
+    private static final String GAME_ID = "105246";
     private static final String PLAYER_NAME = "WeakEntity";
     private static final String PLAYER_KEY = "sk-5VTDWaBiRSqa2fTy2ZExNw:yj02fPcOBJV30UkGtIdRqmHuvbmpHdrQ-JTsXLyh_QuUZEcvh1OmXjccpXyq-qPUIFMOb8de4mLjt9-S9GH8Fh2tA";
     private static int currentStep = 0;
@@ -1094,7 +1094,7 @@ public class Main {
                             hero.pickupItem();
                             hasGun = true;
                             canShoot = true;
-                            NumBullet = currentItemId.equalsIgnoreCase("WATER_GUN") || currentItemId.equalsIgnoreCase("LEGO_GUN") ? 5 : 10;
+                            NumBullet = currentItemId.equalsIgnoreCase("SCEPTER") || currentItemId.equalsIgnoreCase("RUBBER_GUN") || currentItemId.equalsIgnoreCase("CROSSBOW") || currentItemId.equalsIgnoreCase("SHOTGUN") ? 5 : 10;
                             return;
                         } else if (currentItemType.equalsIgnoreCase("MELEE") && !hasMelee) {
                             System.out.println("Nhặt vũ khí cận chiến tại (" + x + "," + y + "): " + currentItemId);
@@ -1109,11 +1109,11 @@ public class Main {
                             return;
                         } else if (currentItemType.equalsIgnoreCase("ARMOR")) {
                             System.out.println("Nhặt giáp tại (" + x + "," + y + "): " + currentItemId);
-                            if (!hasBody && currentItemId.equalsIgnoreCase("VEST")) {
+                            if (!hasBody && currentItemId.equalsIgnoreCase("ARMOR") || currentItemId.equalsIgnoreCase("MAGIC_ARMOR") ) {
                                 hero.pickupItem();
                                 hasBody = true;
                                 return;
-                            } else if (!hasHead && (currentItemId.equalsIgnoreCase("POT") || currentItemId.equalsIgnoreCase("HELMET"))) {
+                            } else if (!hasHead && (currentItemId.equalsIgnoreCase("WOODEN_HELMET") || currentItemId.equalsIgnoreCase("MAGIC_HELMET"))) {
                                 hero.pickupItem();
                                 hasHead = true;
                                 return;
@@ -1162,12 +1162,12 @@ public class Main {
                                     hero.move(String.valueOf((char)dir[2]));
                                     return; // Di chuyển đến ô có vật phẩm ném
                                 } else if (itemType.equalsIgnoreCase("ARMOR")) {
-                                    if (!hasBody && itemId.equalsIgnoreCase("VEST")) {
-                                        System.out.println("Tìm thấy giáp VEST tại (" + nx + "," + ny + ")");
+                                    if (!hasBody && itemId.equalsIgnoreCase("ARMOR") || itemId.equalsIgnoreCase("MAGIC_ARMOR")) {
+                                        System.out.println("Tìm thấy giáp ARMOR tại (" + nx + "," + ny + ")");
                                         hero.move(String.valueOf((char)dir[2]));
                                         return;
-                                    } else if (!hasHead && (itemId.equalsIgnoreCase("POT") || itemId.equalsIgnoreCase("HELMET"))) {
-                                        System.out.println("Tìm thấy giáp POT/HELMET tại (" + nx + "," + ny + ")");
+                                    } else if (!hasHead && (itemId.equalsIgnoreCase("MAGIC_HELMET") || itemId.equalsIgnoreCase("WOODEN_HELMET"))) {
+                                        System.out.println("Tìm thấy giáp HELMET tại (" + nx + "," + ny + ")");
                                         hero.move(String.valueOf((char)dir[2]));
                                         return;
                                     }
@@ -1219,14 +1219,14 @@ public class Main {
                             // Thu thập giáp nếu thiếu
                             if (!hasHead) {
                                 for (Armor head : listArmor) {
-                                    if (head.getId().equals("POT") || head.getId().equals("HELMET")) {
+                                    if (head.getId().equals("WOODEN_HELMET") || head.getId().equals("MAGIC_HELMET")) {
                                         nodes.add(new Node(head.getX(), head.getY()));
                                     }
                                 }
                             }
                             if (!hasBody) {
                                 for (Armor body : listArmor) {
-                                    if (body.getId().equals("VEST")) {
+                                    if (body.getId().equals("ARMOR") || body.getId().equals("MAGIC_ARMOR") ) {
                                         nodes.add(new Node(body.getX(), body.getY()));
                                     }
                                 }
