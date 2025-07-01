@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="CodeFest">
+    <CLASSES>
+<<<<<<< Updated upstream:.idea/libraries/CodeFestv2_5.xml
+      <root url="jar://$USER_HOME$/Downloads/CodeFestv2.5.jar!/" />
+=======
+      <root url="jar://$USER_HOME$/Downloads/CodeFest.jar!/" />
+>>>>>>> Stashed changes:.idea/libraries/CodeFest.xml
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
