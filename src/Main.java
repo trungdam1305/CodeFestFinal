@@ -6,20 +6,21 @@ import jsclub.codefest.sdk.base.Node;
 import jsclub.codefest.sdk.model.GameMap;
 import jsclub.codefest.sdk.model.Inventory;
 import jsclub.codefest.sdk.model.npcs.Enemy;
-import jsclub.codefest.sdk.model.equipments.Armor;
-import jsclub.codefest.sdk.model.equipments.HealingItem;
+import jsclub.codefest.sdk.model.armors.Armor;
+import jsclub.codefest.sdk.model.healing_items.HealingItem;
 import jsclub.codefest.sdk.model.obstacles.Obstacle;
 import jsclub.codefest.sdk.model.players.Player;
 import jsclub.codefest.sdk.model.weapon.Bullet;
 import jsclub.codefest.sdk.model.weapon.Weapon;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server.jsclub.dev";
-    private static final String GAME_ID = "136761";
-    private static final String PLAYER_NAME = "WeakEntity";
+    private static final String GAME_ID = "108768";
+    private static final String PLAYER_NAME = "DomDom";
     private static final String PLAYER_KEY = "sk-5VTDWaBiRSqa2fTy2ZExNw:yj02fPcOBJV30UkGtIdRqmHuvbmpHdrQ-JTsXLyh_QuUZEcvh1OmXjccpXyq-qPUIFMOb8de4mLjt9-S9GH8Fh2tA";
     private static int currentStep = 0;
 
@@ -27,7 +28,7 @@ public class Main {
     private static boolean hyperDodge = false;
     private static boolean hasGun = false;
     private static boolean hasMelee = false;
-    private static String IDCurrentMelee= "";
+    private static String IDCurrentMelee = "";
     private static boolean hasThrow = false;
     private static int NumBullet = 0;
     private static boolean hasHead = false;
@@ -41,10 +42,10 @@ public class Main {
     private static Player savedTarget = null;
     private static String savedID = null;
     static Node tron = null;
-    static boolean goc1=true;
-    static boolean goc2=false;
-    static boolean goc3=false;
-    static boolean goc4=false;
+    static boolean goc1 = true;
+    static boolean goc2 = false;
+    static boolean goc3 = false;
+    static boolean goc4 = false;
 
     private static int NumHeal = 0;
     private static String[] IDHealItem = new String[4];
@@ -72,6 +73,7 @@ public class Main {
             }
         }
     }
+
     //_________________________________________________________________
     static int[][] map = new int[121][121];
 
@@ -88,7 +90,7 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException {
-        Hero hero = new Hero(GAME_ID, PLAYER_NAME,PLAYER_KEY);
+        Hero hero = new Hero(GAME_ID, PLAYER_NAME, PLAYER_KEY);
 
         Emitter.Listener onMapUpdate = new Emitter.Listener() {
             @Override
@@ -97,7 +99,7 @@ public class Main {
                 try {
                     currentStep++;
                     System.out.println("********************************************************************");
-                    System.out.println("Current step: "+currentStep);
+                    System.out.println("Current step: " + currentStep);
                     System.out.println("List healItem : ");
                     System.out.println(IDHealItem[0]);
                     System.out.println(IDHealItem[1]);
@@ -108,30 +110,30 @@ public class Main {
                     if (NumBullet == 0) {
                         hasGun = false;
                     }
-                    if(HealcountDown != 0){
-                        HealcountDown --;
+                    if (HealcountDown != 0) {
+                        HealcountDown--;
                     }
-                    if(HealcountDown == 0  && IDHealItem[0] != null){
+                    if (HealcountDown == 0 && IDHealItem[0] != null) {
                         canHeal = true;
-                    }else{
+                    } else {
                         canHeal = false;
                     }
 
-                    if(ShootcountDown != 0){
+                    if (ShootcountDown != 0) {
                         ShootcountDown--;
                     }
-                    if(ShootcountDown == 0 && hasGun){
+                    if (ShootcountDown == 0 && hasGun) {
                         canShoot = true;
                     }
-                    if(AttackcountDown != 0){
-                        AttackcountDown --;
+                    if (AttackcountDown != 0) {
+                        AttackcountDown--;
                     }
-                    if(AttackcountDown == 0){
+                    if (AttackcountDown == 0) {
                         hyperDodge = false;
                         canAttack = true;
                     }
-                    if (!hasMelee&&hasGun&&canShoot){
-                        hyperDodge=false;
+                    if (!hasMelee && hasGun && canShoot) {
+                        hyperDodge = false;
                     }
                     GameMap gameMap = hero.getGameMap();
                     gameMap.updateOnUpdateMap(args[0]);
@@ -146,7 +148,7 @@ public class Main {
                     List<Node> otherPlayesNode = new ArrayList<>();
                     List<Enemy> listEnemies = gameMap.getListEnemies();
 
-                    if(player.getHealth() <= 0){
+                    if (player.getHealth() <= 0) {
                         canHeal = false;
                         HealcountDown = 0;
                         canAttack = true;
@@ -160,15 +162,15 @@ public class Main {
                         hasHead = false;
                         hasBody = false;
                         NumHeal = 0;
-                        IDHealItem[0]= null;
-                        IDHealItem[1]= null;
-                        IDHealItem[2]= null;
-                        IDHealItem[3]= null;
+                        IDHealItem[0] = null;
+                        IDHealItem[1] = null;
+                        IDHealItem[2] = null;
+                        IDHealItem[3] = null;
                     }
 
-                    for(Obstacle chest : gameMap.getListChests()) {
-                        if(chest.getHp() != 0){
-                            restrictedNodes.add(new Node(chest.getX(),chest.getY()));
+                    for (Obstacle chest : gameMap.getListChests()) {
+                        if (chest.getHp() != 0) {
+                            restrictedNodes.add(new Node(chest.getX(), chest.getY()));
                         }
                     }
                     for (Player p : otherPlayers) {
@@ -296,7 +298,7 @@ public class Main {
                     //===================================================================================================================
 
                     for (Obstacle o : restricedList) {
-                        if((o.getX()!= gameMap.getMapSize()/2) && (o.getY()!= gameMap.getMapSize()/2)) {
+                        if ((o.getX() != gameMap.getMapSize() / 2) && (o.getY() != gameMap.getMapSize() / 2)) {
                             restrictedNodes.add(new Node(o.getX(), o.getY()));
                         }
                     }
@@ -321,10 +323,10 @@ public class Main {
 
 
                     //condition of loot
-                    if(NumHeal < 4 ||
+                    if (NumHeal < 2 ||
                             !hasMelee ||
                             !hasGun ||
-                            !(hasHead || hasBody) ){
+                            !(hasHead || hasBody)) {
                         shouldLoot = true;
 
                     }
@@ -430,13 +432,13 @@ public class Main {
                     Player nearPlayer = null;
                     double lowestDistance1 = Integer.MAX_VALUE;
                     double lowestDistance2 = Integer.MAX_VALUE;
-                    for(Player p : otherPlayers){
-                        double distanceMeAndYou = getDistanceBetweenTwoNode(currentNode,new Node(p.getX(),p.getY()));
-                        if( p.getHealth() >= 0 && distanceMeAndYou < lowestDistance1 ){
+                    for (Player p : otherPlayers) {
+                        double distanceMeAndYou = getDistanceBetweenTwoNode(currentNode, new Node(p.getX(), p.getY()));
+                        if (p.getHealth() >= 0 && distanceMeAndYou < lowestDistance1) {
                             lowestDistance1 = distanceMeAndYou;
                             targetPlayer = p;
                         }
-                        if( p.getHealth() >= 0 && distanceMeAndYou < lowestDistance2){
+                        if (p.getHealth() >= 0 && distanceMeAndYou < lowestDistance2) {
                             lowestDistance2 = distanceMeAndYou;
                             nearPlayer = p;
                         }
@@ -446,21 +448,21 @@ public class Main {
 //                    if (nearPlayer!=null) System.out.println(nearPlayer.getPlayerName());
 //                    System.out.println("================================");
 
-                    if(!shouldLoot ){
-                        if(lowestDistance2 <=15 ) {
+                    if (!shouldLoot) {
+                        if (lowestDistance2 <= 15) {
 
                             System.out.println("Hunting timeeee !");
                             shouldHunting = true;
 
-                        }else if(IDHealItem[3] != null &&
+                        } else if (IDHealItem[1] != null &&
                                 hasMelee &&
                                 hasGun &&
                                 hasHead &&
-                                hasBody){
+                                hasBody) {
                             System.out.println("I am hunggryyyyy");
                             shouldHunting = true;
 
-                        }else{
+                        } else {
                             System.out.println("just loot");
                             shouldLoot = true;
                         }
@@ -499,11 +501,11 @@ public class Main {
                     //dieu kien throw
                     List<Player> listPlayerInRangeThrow = new ArrayList<>();
                     for (Player p : otherPlayers) {
-                        if (getDistanceBetweenTwoNode(currentNode, new Node(p.getX(),p.getY())) <=10 && p.getHealth() >= 0) {
+                        if (getDistanceBetweenTwoNode(currentNode, new Node(p.getX(), p.getY())) <= 10 && p.getHealth() >= 0) {
                             listPlayerInRangeThrow.add(p);
                         }
                     }
-                    if(!listPlayerInRangeThrow.isEmpty() && hasThrow){
+                    if (!listPlayerInRangeThrow.isEmpty() && hasThrow) {
                         System.out.println("In range throw");
                         shouldThrow = true;
                     }
@@ -512,25 +514,25 @@ public class Main {
                     //condition of close combat
                     List<Player> listPlayerInRangeCloseCombat = new ArrayList<>();
                     for (Player p : otherPlayers) {
-                        if (getDistanceBetweenTwoNode(currentNode,new Node(p.getX(),p.getY())) <=6 && p.getHealth() >= 0) {
+                        if (getDistanceBetweenTwoNode(currentNode, new Node(p.getX(), p.getY())) <= 6 && p.getHealth() >= 0) {
                             listPlayerInRangeCloseCombat.add(p);
-                            restrictedNodes.add(new Node(p.x,p.y+2));
-                            restrictedNodes.add(new Node(p.x,p.y+3));
+                            restrictedNodes.add(new Node(p.x, p.y + 2));
+                            restrictedNodes.add(new Node(p.x, p.y + 3));
                             //restrictedNodes.add(new Node(p.x,p.y+4));
-                            restrictedNodes.add(new Node(p.x,p.y-2));
-                            restrictedNodes.add(new Node(p.x,p.y-3));
+                            restrictedNodes.add(new Node(p.x, p.y - 2));
+                            restrictedNodes.add(new Node(p.x, p.y - 3));
                             //restrictedNodes.add(new Node(p.x,p.y-4));
-                            restrictedNodes.add(new Node(p.x+2,p.y));
-                            restrictedNodes.add(new Node(p.x+3,p.y));
+                            restrictedNodes.add(new Node(p.x + 2, p.y));
+                            restrictedNodes.add(new Node(p.x + 3, p.y));
                             //restrictedNodes.add(new Node(p.x+4,p.y));
-                            restrictedNodes.add(new Node(p.x-2,p.y));
-                            restrictedNodes.add(new Node(p.x-3,p.y));
+                            restrictedNodes.add(new Node(p.x - 2, p.y));
+                            restrictedNodes.add(new Node(p.x - 3, p.y));
                             //restrictedNodes.add(new Node(p.x-4,p.y));
                         }
-                        if (!hasMelee&&(currentStep<40)&&getDistanceBetweenTwoNode(currentNode,new Node(p.getX(),p.getY())) <=3 && p.getHealth() >= 0) {
+                        if (!hasMelee && (currentStep < 40) && getDistanceBetweenTwoNode(currentNode, new Node(p.getX(), p.getY())) <= 3 && p.getHealth() >= 0) {
                             listPlayerInRangeCloseCombat.add(p);
                         }
-                        if (!hasMelee&&(currentStep>290)&&getDistanceBetweenTwoNode(currentNode,new Node(p.getX(),p.getY())) <=8 && p.getHealth() >= 0) {
+                        if (!hasMelee && (currentStep > 290) && getDistanceBetweenTwoNode(currentNode, new Node(p.getX(), p.getY())) <= 8 && p.getHealth() >= 0) {
                             listPlayerInRangeCloseCombat.add(p);
                         }
                     }
@@ -557,14 +559,14 @@ public class Main {
                     // end condition of run bo
 
                     // condition of healing
-                    if(player.getHealth() < 100 && canHeal && IDHealItem[0]!=null){
+                    if (player.getHealth() < 100 && canHeal && IDHealItem[0] != null) {
                         shouldHeal = true;
                     }
                     // end condition of healing
                     //conditon of shoot
                     List<Player> listPlayerInRangeShoot = new ArrayList<>();
                     for (Player p : otherPlayers) {
-                        if (getDistanceBetweenTwoNode(currentNode,new Node(p.getX(),p.getY())) <=2 && p.getHealth() >= 0) {
+                        if (getDistanceBetweenTwoNode(currentNode, new Node(p.getX(), p.getY())) <= 2 && p.getHealth() >= 0) {
                             listPlayerInRangeShoot.add(p);
                         }
                     }
@@ -575,19 +577,17 @@ public class Main {
                     //end condition of shoot
 
 
-
-
                     // take priority
                     int currentPriority = 6;
                     while (true) {
                         // chay bo
-                        if(shouldRunBo){
+                        if (shouldRunBo) {
                             currentPriority = 0;
                             break;
                         }
                         //hyperDodge
                         if (hyperDodge) {
-                            currentPriority=-1;
+                            currentPriority = -1;
                             break;
                         }
                         // can chien
@@ -604,10 +604,10 @@ public class Main {
                         // hoi mau
                         if (shouldHeal) {
                             // neu dang can chien thi ban mot phat trong thoi gian cooldown roi moi hoi mau
-                            if(shouldCloseCombat && canShoot){
+                            if (shouldCloseCombat && canShoot) {
                                 currentPriority = 5;
                                 break;
-                            }else if(canHeal){
+                            } else if (canHeal) {
                                 currentPriority = 3;
                                 break;
                             }
@@ -624,12 +624,12 @@ public class Main {
                             break;
                         }
                         // loot do
-                        if (shouldLoot ) {
+                        if (shouldLoot) {
                             currentPriority = 6;
                             break;
                         }
 
-                        if(shouldHunting){
+                        if (shouldHunting) {
                             currentPriority = 7;
                             break;
                         }
@@ -637,13 +637,13 @@ public class Main {
                     }
                     //end take priority
                     //throw - priority 4
-                    if (currentPriority==4) {
+                    if (currentPriority == 4) {
                         System.out.println("Vao cau lenh throw");
                         boolean deploy = false;
                         for (Player target : listPlayerInRangeThrow) {
                             if (!getThrowDirection(currentNode, new Node(target.x, target.y)).equalsIgnoreCase("planB")) {
                                 hero.throwItem(getThrowDirection(currentNode, new Node(target.x, target.y)), PathUtils.distance(currentNode, new Node(target.x, target.y)));
-                                hasThrow=false;
+                                hasThrow = false;
                                 deploy = true;
                             }
                         }
@@ -665,16 +665,16 @@ public class Main {
                         }
                     }
                     //hyper dodge - priority -1
-                    if (currentPriority == -1){
+                    if (currentPriority == -1) {
                         String path = null;
                         for (Player p : otherPlayers) {
                             if (p.getID().equalsIgnoreCase(savedID)) {
-                                savedTarget=p;
+                                savedTarget = p;
                                 break;
                             }
                         }
                         while (true) {
-                            System.out.println("hyper lap:"+savedTarget);
+                            System.out.println("hyper lap:" + savedTarget);
 //                            if (AttackcountDown==1) {
 //                                if (PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,savedTarget,false)!=null)
 //                                {
@@ -682,97 +682,97 @@ public class Main {
 //                                    break;
 //                                }
 //                            }
-                            if (player.getHealth()<100) {
-                                currentPriority=3;
+                            if (player.getHealth() < 100) {
+                                currentPriority = 3;
                                 break;
                             }
                             Node tranhgiaotranh = null;
                             int x1, y1;
-                            if(x>= savedTarget.x&&y>=savedTarget.y){
-                                x1=savedTarget.x+1;
-                                y1=savedTarget.y+2;
-                                tranhgiaotranh= new Node(x1, y1);
-                                for (int i = x1; i <mapSize-realSize ; i++) {
-                                    for (int j = y1; j <mapSize-realSize ; j++) {
-                                        tranhgiaotranh=new Node(i, j);
-                                        if (PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,tranhgiaotranh,false)!=null
-                                                && !PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,tranhgiaotranh,false).isEmpty()){
-                                            path=PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,tranhgiaotranh,false);
+                            if (x >= savedTarget.x && y >= savedTarget.y) {
+                                x1 = savedTarget.x + 1;
+                                y1 = savedTarget.y + 2;
+                                tranhgiaotranh = new Node(x1, y1);
+                                for (int i = x1; i < mapSize - realSize; i++) {
+                                    for (int j = y1; j < mapSize - realSize; j++) {
+                                        tranhgiaotranh = new Node(i, j);
+                                        if (PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, tranhgiaotranh, false) != null
+                                                && !PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, tranhgiaotranh, false).isEmpty()) {
+                                            path = PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, tranhgiaotranh, false);
                                             break;
                                         }
                                     }
-                                    if (path!=null ){
+                                    if (path != null) {
                                         break;
                                     }
                                 }
                             }
-                            if(x<= savedTarget.x&&y>=savedTarget.y){
-                                x1=savedTarget.x-1;
-                                y1=savedTarget.y+2;
-                                tranhgiaotranh= new Node(x1, y1);
-                                for (int i = x1; i >0 ; i--) {
-                                    for (int j = y1; j <mapSize-realSize ; j++) {
-                                        tranhgiaotranh=new Node(i, j);
-                                        if (PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,tranhgiaotranh,false)!=null){
-                                            path=PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,tranhgiaotranh,false);
+                            if (x <= savedTarget.x && y >= savedTarget.y) {
+                                x1 = savedTarget.x - 1;
+                                y1 = savedTarget.y + 2;
+                                tranhgiaotranh = new Node(x1, y1);
+                                for (int i = x1; i > 0; i--) {
+                                    for (int j = y1; j < mapSize - realSize; j++) {
+                                        tranhgiaotranh = new Node(i, j);
+                                        if (PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, tranhgiaotranh, false) != null) {
+                                            path = PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, tranhgiaotranh, false);
                                             break;
                                         }
                                     }
-                                    if (path!=null){
+                                    if (path != null) {
                                         break;
                                     }
                                 }
                             }
-                            if(x>= savedTarget.x&&y<=savedTarget.y){
-                                x1=savedTarget.x+2;
-                                y1=savedTarget.y-1;
-                                tranhgiaotranh= new Node(x1, y1);
-                                for (int i = x1; i <mapSize-realSize ; i++) {
-                                    for (int j = y1; j >0 ; j--) {
-                                        tranhgiaotranh=new Node(i, j);
-                                        if (PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,tranhgiaotranh,false)!=null){
-                                            path=PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,tranhgiaotranh,false);
+                            if (x >= savedTarget.x && y <= savedTarget.y) {
+                                x1 = savedTarget.x + 2;
+                                y1 = savedTarget.y - 1;
+                                tranhgiaotranh = new Node(x1, y1);
+                                for (int i = x1; i < mapSize - realSize; i++) {
+                                    for (int j = y1; j > 0; j--) {
+                                        tranhgiaotranh = new Node(i, j);
+                                        if (PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, tranhgiaotranh, false) != null) {
+                                            path = PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, tranhgiaotranh, false);
                                             break;
                                         }
                                     }
-                                    if (path!=null){
+                                    if (path != null) {
                                         break;
                                     }
                                 }
                             }
-                            if(x<= savedTarget.x&&y<=savedTarget.y){
-                                x1=savedTarget.x-1;
-                                y1=savedTarget.y-2;
-                                tranhgiaotranh= new Node(x1, y1);
-                                for (int i = x1; i >0 ; i--) {
-                                    for (int j = y1; j >0 ; j--) {
-                                        tranhgiaotranh=new Node(i, j);
-                                        if (PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,tranhgiaotranh,false)!=null){
-                                            path=PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,tranhgiaotranh,false);
+                            if (x <= savedTarget.x && y <= savedTarget.y) {
+                                x1 = savedTarget.x - 1;
+                                y1 = savedTarget.y - 2;
+                                tranhgiaotranh = new Node(x1, y1);
+                                for (int i = x1; i > 0; i--) {
+                                    for (int j = y1; j > 0; j--) {
+                                        tranhgiaotranh = new Node(i, j);
+                                        if (PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, tranhgiaotranh, false) != null) {
+                                            path = PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, tranhgiaotranh, false);
                                             break;
                                         }
                                     }
-                                    if (path!=null){
+                                    if (path != null) {
                                         break;
                                     }
                                 }
                             }
                             break;
                         }
-                        System.out.println("hyper dodge:"+path);
+                        System.out.println("hyper dodge:" + path);
                         hero.move(path);
                     }
                     //heal - priority 3
-                    if(currentPriority == 3){
+                    if (currentPriority == 3) {
                         System.out.println("heal heal heal");
-                        if(shouldCloseCombat){
+                        if (shouldCloseCombat) {
                             System.out.println("in combat use heal has usageTime <=1");
                             for (int i = 0; i < NumHeal; i++) {
-                                if(IDHealItem[i].equalsIgnoreCase("SNACK") ||
-                                        IDHealItem[i].equalsIgnoreCase("INSECTICIDE")
-                                ){
+                                if (IDHealItem[i].equalsIgnoreCase("GOD_LEAF") ||
+                                        IDHealItem[i].equalsIgnoreCase("SPIRIT_TEAR")
+                                ) {
                                     hero.useItem(IDHealItem[i]);
-                                    for (int j = i; j < IDHealItem.length -1; j++) {
+                                    for (int j = i; j < IDHealItem.length - 1; j++) {
                                         IDHealItem[j] = IDHealItem[j + 1];
                                     }
                                     IDHealItem[IDHealItem.length - 1] = null;
@@ -784,7 +784,7 @@ public class Main {
 
                                 }
                             }
-                        }else{
+                        } else {
                             System.out.println("not in combat use heal depend on currentHP");
                             boolean safePlace = true;
 
@@ -803,12 +803,131 @@ public class Main {
                                 }
                             }
 
-                            if(safePlace ){
+                            if (safePlace) {
                                 for (int i = 0; i < NumHeal; i++) {
-                                    if(IDHealItem[i].equalsIgnoreCase("LUNCH_BOX") ){
+                                    if (IDHealItem[i].equalsIgnoreCase("UNICORN_BLOOD")) {
 
                                         hero.useItem(IDHealItem[i]);
-                                        for (int j = i; j < IDHealItem.length -1; j++) {
+                                        for (int j = i; j < IDHealItem.length - 1; j++) {
+                                            IDHealItem[j] = IDHealItem[j + 1];
+                                        }
+                                        IDHealItem[IDHealItem.length - 1] = null;
+                                        canHeal = false;
+                                        HealcountDown = 6;
+                                        NumHeal--;
+                                        return;
+
+
+                                    }
+                                }
+                                for (int i = 0; i < NumHeal; i++) {
+                                    if (IDHealItem[i].equalsIgnoreCase("PHOENIX_FEATHERS")) {
+
+                                        hero.useItem(IDHealItem[i]);
+
+                                        for (int j = i; j < IDHealItem.length - 1; j++) {
+                                            IDHealItem[j] = IDHealItem[j + 1];
+                                        }
+                                        IDHealItem[IDHealItem.length - 1] = null;
+                                        canHeal = false;
+                                        HealcountDown = 3;
+                                        NumHeal--;
+                                        return;
+                                    }
+                                }
+                                for (int i = 0; i < NumHeal; i++) {
+                                    if (IDHealItem[i].equalsIgnoreCase("MERMAID_TAIL")) {
+
+                                        hero.useItem(IDHealItem[i]);
+                                        for (int j = i; j < IDHealItem.length - 1; j++) {
+                                            IDHealItem[j] = IDHealItem[j + 1];
+                                        }
+                                        IDHealItem[IDHealItem.length - 1] = null;
+                                        canHeal = false;
+                                        HealcountDown = 2;
+                                        NumHeal--;
+                                        return;
+
+
+                                    }
+                                }
+                                for (int i = 0; i < NumHeal; i++) {
+                                    if (IDHealItem[i].equalsIgnoreCase("SPIRIT_TEAR")) {
+
+                                        hero.useItem(IDHealItem[i]);
+                                        for (int j = i; j < IDHealItem.length - 1; j++) {
+                                            IDHealItem[j] = IDHealItem[j + 1];
+                                        }
+                                        IDHealItem[IDHealItem.length - 1] = null;
+                                        canHeal = false;
+                                        HealcountDown = 1;
+                                        NumHeal--;
+                                        return;
+
+                                    }
+                                }
+                                for (int i = 0; i < NumHeal; i++) {
+                                    if (IDHealItem[i].equalsIgnoreCase("GOD_LEAF")) {
+
+                                        hero.useItem(IDHealItem[i]);
+                                        for (int j = i; j < IDHealItem.length - 1; j++) {
+                                            IDHealItem[j] = IDHealItem[j + 1];
+                                        }
+                                        IDHealItem[IDHealItem.length - 1] = null;
+                                        canHeal = false;
+                                        HealcountDown = 1;
+                                        NumHeal--;
+                                        return;
+                                    }
+                                }
+                                for (int i = 0; i < NumHeal; i++) {
+                                    if (IDHealItem[i].equalsIgnoreCase("ELIXIR")) {
+
+                                        hero.useItem(IDHealItem[i]);
+                                        for (int j = i; j < IDHealItem.length - 1; j++) {
+                                            IDHealItem[j] = IDHealItem[j + 1];
+                                        }
+                                        IDHealItem[IDHealItem.length - 1] = null;
+                                        canHeal = false;
+                                        HealcountDown = 0;
+                                        NumHeal--;
+                                        return;
+                                    }
+                                }
+                                for (int i = 0; i < NumHeal; i++) {
+                                    if (IDHealItem[i].equalsIgnoreCase("MAGIC")) {
+
+                                        hero.useItem(IDHealItem[i]);
+                                        for (int j = i; j < IDHealItem.length - 1; j++) {
+                                            IDHealItem[j] = IDHealItem[j + 1];
+                                        }
+                                        IDHealItem[IDHealItem.length - 1] = null;
+                                        canHeal = false;
+                                        HealcountDown = 0;
+                                        NumHeal--;
+                                        return;
+                                    }
+                                }
+                                for (int i = 0; i < NumHeal; i++) {
+                                    if (IDHealItem[i].equalsIgnoreCase("ELIXIR_OF_LIFE")) {
+
+                                        hero.useItem(IDHealItem[i]);
+                                        for (int j = i; j < IDHealItem.length - 1; j++) {
+                                            IDHealItem[j] = IDHealItem[j + 1];
+                                        }
+                                        IDHealItem[IDHealItem.length - 1] = null;
+                                        canHeal = false;
+                                        HealcountDown = 0;
+                                        NumHeal--;
+                                        return;
+                                    }
+                                }
+                                for (int i = 0; i < NumHeal; i++) {
+                                    if (IDHealItem[i].equalsIgnoreCase("COMPASS")) {
+                                        if (canAttack){
+                                            hero.useItem(IDHealItem[i]);
+                                        }
+                                        for (int j = i; j < IDHealItem.length - 1; j++) {
                                             IDHealItem[j] = IDHealItem[j + 1];
                                         }
                                         IDHealItem[IDHealItem.length - 1] = null;
@@ -816,80 +935,16 @@ public class Main {
                                         HealcountDown = 4;
                                         NumHeal--;
                                         return;
-
-
                                     }
                                 }
-                                for (int i = 0; i < NumHeal; i++) {
-                                    if(IDHealItem[i].equalsIgnoreCase("BANDAGES") ){
-
-                                        hero.useItem(IDHealItem[i]);
-
-                                        for (int j = i; j < IDHealItem.length -1; j++) {
-                                            IDHealItem[j] = IDHealItem[j + 1];
-                                        }
-                                        IDHealItem[IDHealItem.length - 1] = null;
-                                        canHeal = false;
-                                        HealcountDown = 2;
-                                        NumHeal--;
-                                        return;
-
-
-                                    }
-                                }
-                                for (int i = 0; i < NumHeal; i++) {
-                                    if(IDHealItem[i].equalsIgnoreCase("DRINK") ){
-
-                                        hero.useItem(IDHealItem[i]);
-                                        for (int j = i; j < IDHealItem.length -1; j++) {
-                                            IDHealItem[j] = IDHealItem[j + 1];
-                                        }
-                                        IDHealItem[IDHealItem.length - 1] = null;
-                                        canHeal = false;
-                                        HealcountDown = 2;
-                                        NumHeal--;
-                                        return;
-
-
-                                    }
-                                }
-                                for (int i = 0; i < NumHeal; i++) {
-                                    if(IDHealItem[i].equalsIgnoreCase("INSECTICIDE") ){
-
-                                        hero.useItem(IDHealItem[i]);
-                                        for (int j = i; j < IDHealItem.length -1; j++) {
-                                            IDHealItem[j] = IDHealItem[j + 1];
-                                        }
-                                        IDHealItem[IDHealItem.length - 1] = null;
-                                        canHeal = false;
-                                        HealcountDown = 2;
-                                        NumHeal--;
-                                        return;
-
-                                    }
-                                }for (int i = 0; i < NumHeal; i++) {
-                                    if(IDHealItem[i].equalsIgnoreCase("SNACK") ){
-
-                                        hero.useItem(IDHealItem[i]);
-                                        for (int j = i; j < IDHealItem.length -1; j++) {
-                                            IDHealItem[j] = IDHealItem[j + 1];
-                                        }
-                                        IDHealItem[IDHealItem.length - 1] = null;
-                                        canHeal = false;
-                                        HealcountDown = 2;
-                                        NumHeal--;
-                                        return;
-                                    }
-                                }
-                            }
-                            else  currentPriority=prePriority;
+                            } else currentPriority = prePriority;
 
                         }
                     }
 
                     //run bo - priority 0
                     if (currentPriority == 0 && countBo > 0) {
-                        countBo --;
+                        countBo--;
                         restrictedNodes.addAll(otherPlayesNode);
                         String path = null;
                         int i = 0;
@@ -931,18 +986,18 @@ public class Main {
                         if (listPlayerInRangeCloseCombat.size() < 2) {// danh 1 vs 1
                             savedID = listPlayerInRangeCloseCombat.get(0).getID();
                             savedTarget = listPlayerInRangeCloseCombat.get(0);
-                            nodeOfTargetPlayer = new Node(listPlayerInRangeCloseCombat.get(0).getX(),listPlayerInRangeCloseCombat.get(0).getY());
+                            nodeOfTargetPlayer = new Node(listPlayerInRangeCloseCombat.getFirst().getX(), listPlayerInRangeCloseCombat.getFirst().getY());
                         } else {// combat nhieu nguoi
                             //danh thang thap mau nhat
                             float lowestHp = Float.MAX_VALUE;
                             System.out.println("--------------");
                             System.out.println("list Player in range ");
-                            for (Player p : listPlayerInRangeCloseCombat ) {
+                            for (Player p : listPlayerInRangeCloseCombat) {
                                 System.out.println("Name: " + p.getID());
-                                System.out.println("HP: "+ p.getHealth());
-                                if(p.getHealth() < lowestHp){
+                                System.out.println("HP: " + p.getHealth());
+                                if (p.getHealth() < lowestHp) {
                                     lowestHp = p.getHealth();
-                                    nodeOfTargetPlayer = new Node(p.getX(),p.getY());
+                                    nodeOfTargetPlayer = new Node(p.getX(), p.getY());
                                     savedID = p.getID();
                                     savedTarget = p;
                                 }
@@ -954,43 +1009,47 @@ public class Main {
                         String direction = getCloseCombatDirection(currentNode, nodeOfTargetPlayer);
                         if (direction.equalsIgnoreCase("planB")) {
                             System.out.println("Plan B in close combat is implementing");
-                            System.out.println("Path to enemy: " +PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, nodeOfTargetPlayer, false));
+                            System.out.println("Path to enemy: " + PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, nodeOfTargetPlayer, false));
                             hero.move(PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, nodeOfTargetPlayer, false));
-                            if(PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, nodeOfTargetPlayer, false) == null){
+                            if (PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, nodeOfTargetPlayer, false) == null) {
                                 System.out.println("Tam thoi di chuyen trong 3 step toi tranh loi");
                                 canAttack = false;
                                 AttackcountDown = 3;
                             }
                         } else {
-                            System.out.println("hero attack at: "+ currentStep);
-                            System.out.println("current melee is: "+ inventory.getMelee());
+                            System.out.println("hero attack at: " + currentStep);
+                            System.out.println("current melee is: " + inventory.getMelee());
                             hero.attack(direction);
 
-                            if(hasGun && inventory.getMelee().getCooldown() >1){
-                                if(inventory.getMelee().getId().equalsIgnoreCase("LIGHT_SABER")){
-                                    AttackcountDown = 2;
-                                }else{
-                                    AttackcountDown = 2;
+                            if (hasGun && inventory.getMelee().getCooldown() > 1) {
+                                if (inventory.getMelee().getId().equalsIgnoreCase("BONE")) {
+                                    AttackcountDown = 4;
+                                } else {
+                                    AttackcountDown = 4;
                                 }
                                 canAttack = false;
                             }
-                            if(hasGun && inventory.getMelee().getCooldown() <=1){
+                            if (hasGun && inventory.getMelee().getCooldown() <= 1) {
                                 System.out.println("danh 1 cai xong ban");
                                 AttackcountDown = 2;
                                 canAttack = false;
                             }
-                            if(!hasGun && (IDCurrentMelee.equalsIgnoreCase("BROOM")
-                                    ||IDCurrentMelee.equalsIgnoreCase("SANDAL") )){
+                            if (!hasGun && (IDCurrentMelee.equalsIgnoreCase("AXE")
+                            )) {
                                 AttackcountDown = 6;
                                 hyperDodge = true;
                                 canAttack = false;
                             }
-                            if(!hasGun && (IDCurrentMelee.equalsIgnoreCase("LIGHT_SABER"))){
-                                AttackcountDown = 8;
+                            if (!hasGun && (IDCurrentMelee.equalsIgnoreCase("KNIFE"))) {
+                                AttackcountDown = 5;
                                 hyperDodge = true;
                                 canAttack = false;
                             }
-
+                            if (!hasGun && (IDCurrentMelee.equalsIgnoreCase("TREE_BRANCH"))) {
+                                AttackcountDown = 1;
+                                hyperDodge = true;
+                                canAttack = false;
+                            }
 
                         }
 
@@ -1037,20 +1096,20 @@ public class Main {
                         if (listPlayerInRangeShoot.size() < 2) {// danh 1 vs 1
                             savedID = listPlayerInRangeCloseCombat.get(0).getID();
                             savedTarget = listPlayerInRangeCloseCombat.get(0);
-                            nodeOfTargetPlayer = new Node(listPlayerInRangeShoot.get(0).getX(),listPlayerInRangeShoot.get(0).getY());
+                            nodeOfTargetPlayer = new Node(listPlayerInRangeShoot.get(0).getX(), listPlayerInRangeShoot.get(0).getY());
                         } else {// combat nhieu nguoi
                             //danh thang thap mau nhat
                             float lowestHp = Float.MAX_VALUE;
                             System.out.println("--------------");
                             System.out.println("list Player in range shoot");
-                            for (Player p : listPlayerInRangeShoot ) {
+                            for (Player p : listPlayerInRangeShoot) {
                                 System.out.println("Name: " + p.getID());
-                                System.out.println("HP: "+ p.getHealth());
-                                if(p.getHealth() < lowestHp){
-                                    savedID=p.getID();
-                                    savedTarget=p;
+                                System.out.println("HP: " + p.getHealth());
+                                if (p.getHealth() < lowestHp) {
+                                    savedID = p.getID();
+                                    savedTarget = p;
                                     lowestHp = p.getHealth();
-                                    nodeOfTargetPlayer = new Node(p.getX(),p.getY());
+                                    nodeOfTargetPlayer = new Node(p.getX(), p.getY());
                                 }
                             }
                             System.out.println("--------------");
@@ -1062,466 +1121,192 @@ public class Main {
                         } else {
                             hero.shoot(direction);
                             NumBullet--;
-                            System.out.println("hero shoot at: "+ currentStep);
+                            System.out.println("hero shoot at: " + currentStep);
                             ShootcountDown = 2;
                             canShoot = false;
                         }
 
                     }
-                    // loot do - priority 6
                     if (currentPriority == 6) {
+                        // 1. Nhặt liên tục mọi item tại vị trí hiện tại (kể cả sau phá rương)
+                        while (true) {
+                            String currentItemId = gameMap.getElementByIndex(x, y).getId();
+                            String currentItemType = gameMap.getElementByIndex(x, y).getType().name();
+                            System.out.println("Kiểm tra vị trí hiện tại (" + x + "," + y + "): " + currentItemType + " - " + currentItemId + ", hasHead: " + hasHead);
+                            boolean picked = false;
 
-                        boolean headvip=false;
-                        System.out.println("loot");
-                        List<Armor> listArmor = gameMap.getListArmors();
-                        List<HealingItem> listHealingItem = gameMap.getListHealingItems();
-//                        List<Weapon> listWeapon = gameMap.getListWeapons();
-                        // --------------------------------------------------
-                        List<Weapon> listThrow = gameMap.getAllThrowable();
-                        List<Weapon> listGun = gameMap.getAllGun();
-                        List<Weapon> listMele = gameMap.getAllMelee();
-                        boolean nearGun = false;
-                        //-------------------------------------------------
-
-                        for (Weapon gun :listGun) {
-                            if(getDistanceBetweenTwoNode(currentNode,gun)<=10) {
-                                nearGun=true;
-                                break;
-                            }
-                        }
-                        if (hasMelee&&!hasGun&&nearGun&&(hasBody||hasHead)) {
-                            System.out.println("not gun but near, let pick it up");
-                            for(Weapon gun: listGun){
-                                if(PathUtils.checkInsideSafeArea(new Node(gun.getX(),gun.getY()), gameMap.getSafeZone(), gameMap.getMapSize())){
-                                    nodes.add(new Node(gun.getX(), gun.getY()));
-                                }
-                            }
-                        }
-                        else {
-                            if(IDHealItem[3 ] == null ){
-                                System.out.println("not total healing item, just find");
-                                for (HealingItem healingItem : listHealingItem) {
-                                    if(PathUtils.checkInsideSafeArea(new Node(healingItem.getX(),healingItem.getY()), gameMap.getSafeZone(), gameMap.getMapSize()))
-                                        nodes.add(new Node(healingItem.getX(), healingItem.getY()));
-                                }
-                            }
-
-//
-                            if(!hasHead){
-                                for(Armor head: listArmor){
-                                    if(head.getId().equals("POT") || head.getId().equals("HELMET")){
-                                        nodes.add(new Node(head.getX(), head.getY()));
-                                    }
-                                }
-                            }
-                            if(!hasBody){
-                                for(Armor body: listArmor){
-                                    if(body.getId().equals("VEST")){
-                                        nodes.add(new Node(body.getX(), body.getY()));
-                                    }
-
-                                }
-                            }
-
-                            if(!hasGun){
-                                System.out.println("not gun, let find one");
-                                for(Weapon gun: listGun){
-                                    if(PathUtils.checkInsideSafeArea(new Node(gun.getX(),gun.getY()), gameMap.getSafeZone(), gameMap.getMapSize()
-                                    )){
-                                        nodes.add(new Node(gun.getX(), gun.getY()));
-                                    }
-                                }
-                            }
-                            if(!hasMelee){
-                                System.out.println("not melee, let find one");
-                                for(Weapon melee: listMele){
-                                    if(PathUtils.checkInsideSafeArea(new Node(melee.getX(),melee.getY()), gameMap.getSafeZone(), gameMap.getMapSize()
-                                    )){
-                                        nodes.add(new Node(melee.getX(), melee.getY()));
-                                    }
-                                }
-                            }
-                            if(!hasThrow){
-                                System.out.println("not throwable, let find one");
-                                for(Weapon throwable: listThrow){
-                                    if(PathUtils.checkInsideSafeArea(new Node(throwable.getX(),throwable.getY()), gameMap.getSafeZone(), gameMap.getMapSize()
-                                    )){
-                                        nodes.add(new Node(throwable.getX(), throwable.getY()));
-                                    }
-                                }
-                            }
-                            if(!hasMelee || !hasThrow || !hasHead || !hasBody || IDHealItem[3]== null){
-                                for (int i = 1; i < gameMap.getMapSize() ; i++) {
-                                    for (Obstacle chest : listChest) {
-                                        if(PathUtils.checkInsideSafeArea(chest, gameMap.getSafeZone(), gameMap.getMapSize())){
-                                            int chestX = chest.getX();
-                                            int chestY = chest.getY();
-                                            if ((chestX >= x - 10 * i && chestX <= x) && (chestY >= y - 10 * i && chestY <= y + 10 * i)) {
-
-                                                if (chestX == x && chestY > y) {
-                                                    nodes.add(new Node(chestX, chestY - 1));
-                                                } else if (chestX == x && chestY < y) {
-                                                    nodes.add(new Node(chestX, chestY + 1));
-                                                } else {
-                                                    nodes.add(new Node(chestX + 1, chestY));
-                                                }
-                                            }
-                                            if ((chestX > x && chestX <= x + 10 * i) && (chestY >= y - 10 * i && chestY <= y + 10 * i)) {
-                                                nodes.add(new Node(chestX - 1, chestY));
-                                            }
-                                        }
-
-
-                                    }
-                                    if (!nodes.isEmpty()) {
-                                        break;
-                                    }
-                                }
-                            }
-
-//                            for (Obstacle chest : listChest) {
-//                                int chestX = chest.getX();
-//                                int chestY = chest.getY();
-//                                if (chest.getHp() != 0) {
-//                                    if (chestX == x && chestY > y) {
-//                                        listNodeChest.add(new Node(chestX, chestY - 1));
-//                                    } else if (chestX == x && chestY < y) {
-//                                        listNodeChest.add(new Node(chestX, chestY + 1));
-//                                    } else {
-//                                        listNodeChest.add(new Node(chestX + 1, chestY));
-//                                    }
-//                                    if ((chestX > x  &&  chestY <= y )) {
-//                                        listNodeChest.add(new Node(chestX - 1, chestY));
-//                                    }
-////                                    nodes.add(new Node(chestX, chestY ));
-//
-//                                }
-//
-//
-//                            }
-                        }
-                        String path = null;
-                        System.out.println("check nodes:");
-                        for (Node node : nodes) {
-                            System.out.println("Node"+node.x+","+node.y);
-                            if (PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,node,false)!=null) {
-                                path = PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,node,false);
-                                break;
-                            }
-                        }
-                        System.out.println("_________________");
-
-                        if (path==null)  {
-                            System.out.println("Chay tron");
-                            if(targetPlayer!=null&& hasMelee) {
-                                System.out.println("cao");
-                                restrictedNodes.remove(targetPlayer);
-                                hero.move(PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, targetPlayer, false));
-                                prePriority=currentPriority;
-                                return;
-                            }
-                            else {
-                                for (Player p : otherPlayers) {
-                                    restrictedNodes.add(new Node(p.getX()+1, p.getY()));
-                                    restrictedNodes.add(new Node(p.getX()-1, p.getY()));
-                                    restrictedNodes.add(new Node(p.getX(), p.getY()+1));
-                                    restrictedNodes.add(new Node(p.getX(), p.getY()-1));
-                                }
-                                List<Node> temp = new ArrayList<>();
-                                for (int i = 0; i < gameMap.getListEnemies().size(); i++) {
-                                    if (enemyDirection[i].equals("ngang")) {
-                                        for (int j = enemyMinEdge[i] - 1; j <= enemyMaxEdge[i] + 1; j++) {
-                                            temp.add(new Node(toado[i], j));
-                                            temp.add(new Node(toado[i] - 1, j));
-                                            temp.add(new Node(toado[i] + 1, j));
-
-                                        }
-                                    }
-                                    if (enemyDirection[i].equals("doc")) {
-                                        int count = 0;
-                                        for (int j = enemyMinEdge[i] - 1; j <= enemyMaxEdge[i] + 1; j++) {
-                                            temp.add(new Node(j, toado[i]));
-                                            temp.add(new Node(j, toado[i] - 1));
-                                            temp.add(new Node(j, toado[i] + 1));
-
-                                        }
-                                    }
-                                }
-                                restrictedNodes.addAll(temp);
-                                String pathTron=null;
-                                Node place =null;
-                                if(goc1) {
-                                    //di den goc duoi ben trai
-                                    for (int i = realSize+1; i < gameMap.getMapSize()/2 ; i++) {
-                                        for (int j = realSize+1; j < gameMap.getMapSize()/2 ; j++) {
-                                            if (PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,new Node(i,j),false)!=null){
-                                                pathTron=PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,new Node(i,j),false);
-                                                place = new Node(i,j);
-                                                break;
-                                            }
-                                        }
-                                        if (pathTron!=null) break;
-                                    }
-                                    if (pathTron==null || pathTron.isEmpty()) {
-                                        goc1=false;goc2=true;
-                                    }
-                                    System.out.println("goc1:"+ place.x+ ", "+place.y);
-
-                                }
-                                if(goc2) {
-                                    //di den goc duoi ben phai
-                                    for (int i = realSize+1; i < gameMap.getMapSize()/2 ; i++) {
-                                        for (int j = gameMap.getMapSize()-realSize-1; j > gameMap.getMapSize()/2 ; j--) {
-                                            if (PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,new Node(j,i),false)!=null){
-                                                pathTron=PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,new Node(j,i),false);
-                                                place = new Node(j,i);
-                                                break;
-                                            }
-                                        }
-                                        if (pathTron!=null) break;
-
-                                    }
-                                    if (pathTron==null || pathTron.isEmpty()) {
-                                        goc2=false;goc3=true;
-                                    }
-                                    System.out.println("goc2:"+ place.x+ ", "+place.y);
-
-                                }
-                                if(goc3) {
-                                    //goc tren ben phai
-                                    for (int i =gameMap.getMapSize()-realSize; i >=  gameMap.getMapSize()/2  ; i--) {
-                                        for (int j = gameMap.getMapSize()-realSize; j >=  gameMap.getMapSize()/2  ; j--) {
-                                            if (PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,new Node(i,j),false)!=null){
-                                                pathTron=PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,new Node(i,j),false);
-                                                place = new Node(i,j);
-                                                break;
-                                            }
-                                        }
-                                        if (pathTron!=null) break;
-                                    }
-                                    if (pathTron==null || pathTron.isEmpty()) {
-                                        goc3=false;goc4=true;
-                                    }
-                                    System.out.println("goc3:"+ place.x+ ", "+place.y);
-                                }
-                                if(goc4) {
-                                    //goc tren ben trai
-                                    for (int i = realSize+1; i < gameMap.getMapSize()/2 ; i++) {
-                                        for (int j = gameMap.getMapSize()-realSize; j >=  gameMap.getMapSize()/2  ; j--) {
-                                            if (PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,new Node(i,j),false)!=null){
-                                                pathTron=PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,new Node(i,j),false);
-                                                place = new Node(i,j);
-                                                break;
-                                            }
-                                        }
-                                        if (pathTron!=null) break;
-                                    }
-                                    if (pathTron==null || pathTron.isEmpty()){
-                                        goc4=false;goc1=true;
-                                    }
-                                    System.out.println("goc4:"+ place.x+ ", "+place.y);
-                                }
-                                System.out.println("tron:"+pathTron);
-                                if (pathTron!=null){
-                                    hero.move(pathTron);
-                                    prePriority=currentPriority;
-                                    return;
-                                }                            }
-                        }
-                        path = "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999";
-                        Node currentNodeTarget = null;
-                        for (Node node : nodes) {
-                            String path1 = PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, node, false);
-                            if (path1 != null && path.length() >= path1.length()) {
-                                path = path1;
-                                currentNodeTarget = node;
-                            }
-                        }
-                        if (path!=null&&!path.isEmpty()) {
-                            System.out.println("path: " + path);
-                            if(path.equalsIgnoreCase("99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999")){
-                                System.out.println("khong tim thay duong, chay vao trung tam");
-                                String pathCenter = PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,
-                                        new Node(gameMap.getMapSize()/2, gameMap.getMapSize()/2),false);
-                                System.out.println("node trung tam: "+ pathCenter );
-                                if(pathCenter!= null){
-                                    hero.move(pathCenter.charAt(0)+"");
-                                }else{
-                                    System.out.println("Node trung tam cung null thi chiu");
-                                }
-                            }else{
-                                hero.move(path.charAt(0)+"");
-
-                            }
-                        } else {
-
-                            if (gameMap.getElementByIndex(x - 1, y).getId().equalsIgnoreCase("chest")) {
-                                hero.attack("l");
-                                System.out.println("attack l");
-                            }
-                            if (gameMap.getElementByIndex(x + 1, y).getId().equalsIgnoreCase("chest")) {
-                                hero.attack("r");
-                                System.out.println("attack r");
-                            }
-                            if (gameMap.getElementByIndex(x, y + 1).getId().equalsIgnoreCase("chest")) {
-                                hero.attack("u");
-                                System.out.println("attack u");
-                            }
-                            if (gameMap.getElementByIndex(x, y - 1).getId().equalsIgnoreCase("chest")) {
-                                hero.attack("d");
-                                System.out.println("attack d");
-                            }
-
-//                                if(gameMap.getElementByIndex(currentNodeTarget.getX(), currentNodeTarget.getY()).getId().equals("CHEST") ){
-//                                    String direction = getAttackChessDirection(currentNode,currentNodeTarget);
-//                                    if(direction.equalsIgnoreCase("planB")){
-//                                        hero.move(PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, currentNodeTarget, false));
-//                                    }
-//                                    hero.attack(direction);
-//                                }
-
-
-//-------------------------------------------------------------------------------------------------------------------------
-
-                            if(gameMap.getElementByIndex(x,y).getId().equalsIgnoreCase("WATER_GUN")
-                                    || gameMap.getElementByIndex(x,y).getId().equalsIgnoreCase("LEGO_GUN")){
-                                System.out.println("gun bullet 5");
-                                if (!hasGun) {
-                                    hero.pickupItem();
-                                    hasGun = true;
-                                    canShoot = true;
-                                    NumBullet = 5;
-                                }
-                            }
-                            //-------------------------------------
-                            if(gameMap.getElementByIndex(x,y).getId().equalsIgnoreCase("RUBBER_GUN")
-                                    || gameMap.getElementByIndex(x,y).getId().equalsIgnoreCase("BADMINTON")){
-                                System.out.println("gun bullet 10");
-                                if (!hasGun) {
-                                    hero.pickupItem();
-                                    hasGun = true;
-                                    canShoot = true;
-                                    NumBullet = 10;
-                                }
-                            }
-                            //-------------------------------------
-                            if(gameMap.getElementByIndex(x,y).getType().name().equalsIgnoreCase("throwable")){
-                                System.out.println("throwable");
-                                if(!hasThrow){
-                                    hero.pickupItem();
-                                    hasThrow = true;
-                                }
-                            }
-                            if (gameMap.getElementByIndex(x, y).getType().name().equalsIgnoreCase("melee")) {
-
-                                System.out.println("mel");
-                                if (!hasMelee) {
-                                    hero.pickupItem();
-                                    if(gameMap.getElementByIndex(x, y).getId().equalsIgnoreCase("BROOM")){
-                                        IDCurrentMelee = "BROOM";
-                                    }
-                                    if(gameMap.getElementByIndex(x, y).getId().equalsIgnoreCase("SANDAL")){
-                                        IDCurrentMelee = "SANDAL";
-                                    }
-                                    if(gameMap.getElementByIndex(x, y).getId().equalsIgnoreCase("LIGHT_SABER")){
-                                        IDCurrentMelee = "LIGHT_SABER";
-                                    }
-                                    hasMelee = true;
-                                }
-                            }
-                            if (gameMap.getElementByIndex(x, y).getType().name().equalsIgnoreCase("armor")) {
-                                System.out.println("head");
-                                if (!hasBody && gameMap.getElementByIndex(x,y).getId().equalsIgnoreCase("vest")){
+                            if (currentItemType.equalsIgnoreCase("HEALING_ITEM") && NumHeal < 4) {
+                                System.out.println("Nhặt vật phẩm hồi máu tại (" + x + "," + y + "): " + currentItemId);
+                                hero.pickupItem();
+                                IDHealItem[NumHeal++] = currentItemId;
+                                canHeal = true;
+                                picked = true;
+                            } else if (currentItemType.equalsIgnoreCase("GUN") && !hasGun) {
+                                System.out.println("Nhặt súng tại (" + x + "," + y + "): " + currentItemId);
+                                hero.pickupItem();
+                                hasGun = true;
+                                canShoot = true;
+                                NumBullet = (currentItemId.equalsIgnoreCase("SCEPTER") || currentItemId.equalsIgnoreCase("RUBBER_GUN") ||
+                                        currentItemId.equalsIgnoreCase("CROSSBOW") || currentItemId.equalsIgnoreCase("SHOTGUN")) ? 5 : 10;
+                                picked = true;
+                            } else if (currentItemType.equalsIgnoreCase("MELEE") && !hasMelee) {
+                                System.out.println("Nhặt vũ khí cận chiến tại (" + x + "," + y + "): " + currentItemId);
+                                hero.pickupItem();
+                                hasMelee = true;
+                                IDCurrentMelee = currentItemId;
+                                picked = true;
+                            } else if (currentItemType.equalsIgnoreCase("THROWABLE") && !hasThrow) {
+                                System.out.println("Nhặt vật phẩm ném tại (" + x + "," + y + "): " + currentItemId);
+                                hero.pickupItem();
+                                hasThrow = true;
+                                picked = true;
+                            } else if (currentItemType.equalsIgnoreCase("ARMOR")) {
+                                System.out.println("Kiểm tra giáp tại (" + x + "," + y + "): " + currentItemId);
+                                if (!hasBody && (currentItemId.equalsIgnoreCase("VEST") || currentItemId.equalsIgnoreCase("ARMOR") ||
+                                        currentItemId.equalsIgnoreCase("MAGIC_ARMOR"))) {
+                                    System.out.println("Nhặt giáp thân tại (" + x + "," + y + "): " + currentItemId);
                                     hero.pickupItem();
                                     hasBody = true;
-
-                                }
-
-                                if (!hasHead && (gameMap.getElementByIndex(x, y).getId().equalsIgnoreCase("pot")||gameMap.getElementByIndex(x, y).getId().equalsIgnoreCase("helmet"))) {
+                                    picked = true;
+                                } else if (!hasHead && (currentItemId.equalsIgnoreCase("WOODEN_HELMET") || currentItemId.equalsIgnoreCase("MAGIC_HELMET") ||
+                                        currentItemId.equalsIgnoreCase("POT") || currentItemId.equalsIgnoreCase("HELMET"))) {
+                                    System.out.println("Nhặt mũ tại (" + x + "," + y + "): " + currentItemId);
                                     hero.pickupItem();
                                     hasHead = true;
-                                } else {
-//                                    if (gameMap.getElementByIndex(x, y).getId().equalsIgnoreCase("pot")) {
-//                                        for (Armor armor : inventory.getListArmor()) {
-//                                            if (armor.getId().equalsIgnoreCase("helmet") || armor.getId().equalsIgnoreCase("pot")) {
-//                                                hero.revokeItem(armor.getId());
-//                                            }
-//                                        }
-//                                    }
-//                                    if (gameMap.getElementByIndex(x, y).getId().equalsIgnoreCase("helmet")) {
-//                                        for (Armor armor : inventory.getListArmor()) {
-//                                            if (armor.getId().equalsIgnoreCase("helmet")) {
-//                                                hero.revokeItem(armor.getId());
-//                                            }
-//                                        }
-//                                    }
+                                    picked = true;
                                 }
                             }
+                            if (!picked) break;
+                        }
 
-                            if (gameMap.getElementByIndex(x, y).getType().name().equalsIgnoreCase("HEALING_ITEM")) {
-                                System.out.println("heal Item");
+                        // 2. Nếu còn thiếu bất kỳ đồ nào → ưu tiên loot ngoài map
+                        boolean needLoot = (NumHeal < 2) || !hasHead || !hasBody || !hasGun || !hasMelee || !hasThrow;
 
+                        List<Node> lootTargets = new ArrayList<>();
+                        if (needLoot) {
+                            // Ưu tiên loot ngoài map
+                            for (HealingItem h : gameMap.getListHealingItems())
+                                if (PathUtils.checkInsideSafeArea(new Node(h.getX(), h.getY()), gameMap.getSafeZone(), gameMap.getMapSize()))
+                                    lootTargets.add(new Node(h.getX(), h.getY()));
+                            for (Armor a : gameMap.getListArmors())
+                                if (((a.getId().equalsIgnoreCase("WOODEN_HELMET") && !hasHead) ||
+                                        (a.getId().equalsIgnoreCase("MAGIC_HELMET") && !hasHead) ||
+                                        (a.getId().equalsIgnoreCase("ARMOR") && !hasBody) ||
+                                        (a.getId().equalsIgnoreCase("MAGIC_ARMOR") && !hasBody)) &&
+                                        PathUtils.checkInsideSafeArea(new Node(a.getX(), a.getY()), gameMap.getSafeZone(), gameMap.getMapSize()))
+                                    lootTargets.add(new Node(a.getX(), a.getY()));
+                            for (Weapon g : gameMap.getAllGun())
+                                if (!hasGun && PathUtils.checkInsideSafeArea(new Node(g.getX(), g.getY()), gameMap.getSafeZone(), gameMap.getMapSize()))
+                                    lootTargets.add(new Node(g.getX(), g.getY()));
+                            for (Weapon m : gameMap.getAllMelee())
+                                if (!hasMelee && PathUtils.checkInsideSafeArea(new Node(m.getX(), m.getY()), gameMap.getSafeZone(), gameMap.getMapSize()))
+                                    lootTargets.add(new Node(m.getX(), m.getY()));
+                            for (Weapon t : gameMap.getAllThrowable())
+                                if (!hasThrow && PathUtils.checkInsideSafeArea(new Node(t.getX(), t.getY()), gameMap.getSafeZone(), gameMap.getMapSize()))
+                                    lootTargets.add(new Node(t.getX(), t.getY()));
+                        }
 
-                                if (IDHealItem[3]== null ) {
-                                    if(gameMap.getElementByIndex(x, y).getId().equalsIgnoreCase("INSECTICIDE")){
-                                        hero.pickupItem();
-                                        IDHealItem[NumHeal] = "INSECTICIDE";
-                                        NumHeal++;
-                                        canHeal = true;
-                                        return;
+                        // Nếu ngoài map không còn đồ cần thiết => tìm rương gần nhất
+                        if (needLoot && lootTargets.isEmpty()) {
+                            for (Obstacle chest : gameMap.getListChests()) {
+                                if (chest.getHp() != 0 && PathUtils.checkInsideSafeArea(chest, gameMap.getSafeZone(), gameMap.getMapSize())) {
+                                    int[] dx = {1, -1, 0, 0}, dy = {0, 0, 1, -1};
+                                    for (int i = 0; i < 4; i++) {
+                                        int nx = chest.getX() + dx[i], ny = chest.getY() + dy[i];
+                                        if (nx >= 0 && ny >= 0 && nx < gameMap.getMapSize() && ny < gameMap.getMapSize())
+                                            lootTargets.add(new Node(nx, ny));
                                     }
-                                    if(gameMap.getElementByIndex(x, y).getId().equalsIgnoreCase("DRINK")){
-                                        hero.pickupItem();
-                                        IDHealItem[NumHeal] = "DRINK";
-                                        NumHeal++;
-                                        canHeal = true;
-                                        return;
-                                    }
-                                    if(gameMap.getElementByIndex(x, y).getId().equalsIgnoreCase("BANDAGES")){
-                                        hero.pickupItem();
-                                        IDHealItem[NumHeal] = "BANDAGES";
-                                        NumHeal++;
-                                        canHeal = true;
-                                        return;
-                                    }
-                                    if(gameMap.getElementByIndex(x, y).getId().equalsIgnoreCase("LUNCH_BOX")){
-                                        hero.pickupItem();
-                                        IDHealItem[NumHeal] = "LUNCH_BOX";
-                                        NumHeal++;
-                                        canHeal = true;
-                                        return;
-                                    }
-                                    if(gameMap.getElementByIndex(x, y).getId().equalsIgnoreCase("SNACK")){
-                                        hero.pickupItem();
-                                        IDHealItem[NumHeal] = "SNACK";
-                                        NumHeal++;
-                                        canHeal = true;
-                                        return;
-                                    }
-
                                 }
-
                             }
                         }
+
+                        // Move tới vật phẩm hoặc rương cần phá
+                        Node bestLoot = null; String bestPath = null;
+                        for (Node n : lootTargets) {
+                            String path = PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, n, false);
+                            if (path != null && (bestPath == null || path.length() < bestPath.length())) {
+                                bestPath = path; bestLoot = n;
+                            }
+                        }
+                        if (bestLoot != null && bestPath != null && !bestPath.isEmpty()) {
+                            System.out.println("Move tới vật phẩm/rương " + bestLoot.getX() + "," + bestLoot.getY());
+                            hero.move(bestPath.charAt(0) + "");
+                            return;
+                        }
+
+                        // 3. Nếu đứng cạnh rương, tự động đập rương
+                        if (needLoot) {
+                            for (Obstacle chest : gameMap.getListChests()) {
+                                if (chest.getHp() != 0) {
+                                    String dir = getAttackChessDirection(currentNode, new Node(chest.getX(), chest.getY()));
+                                    if (!dir.equals("planB")) {
+                                        System.out.println("Đập rương hướng " + dir + " tại " + chest.getX() + "," + chest.getY());
+                                        hero.attack(dir);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+
+                        // 4. Nếu đã đủ đồ và máu >= 80, luôn săn player gần nhất (không đứng yên)
+                        if (!needLoot && player.getHealth() >= 80) {
+                            Player bestTarget = null; double bestDist = 99;
+                            for (Player p : otherPlayers) {
+                                double dist = getDistanceBetweenTwoNode(currentNode, new Node(p.getX(), p.getY()));
+                                if (p.getHealth() > 0 && dist < bestDist) { bestDist = dist; bestTarget = p; }
+                            }
+                            if (bestTarget != null) {
+                                String pathHunt = PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, new Node(bestTarget.getX(), bestTarget.getY()), false);
+                                if (pathHunt != null && !pathHunt.isEmpty()) {
+                                    System.out.println("Săn player " + bestTarget.getID() + " tại " + bestTarget.getX() + "," + bestTarget.getY());
+                                    hero.move(pathHunt.charAt(0) + "");
+                                    return;
+                                }
+                            }
+                        }
+
+                        // 5. Nếu đang ngoài bo, ưu tiên chạy vào bo (safe zone)
+                        if (!PathUtils.checkInsideSafeArea(currentNode, gameMap.getSafeZone(), gameMap.getMapSize())) {
+                            Node center = new Node(gameMap.getMapSize() / 2, gameMap.getMapSize() / 2);
+                            String pathToCenter = PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, center, false);
+                            if (pathToCenter != null && !pathToCenter.isEmpty()) {
+                                System.out.println("Chạy về bo");
+                                hero.move(pathToCenter.charAt(0) + "");
+                                return;
+                            }
+                        }
+
+                        // 6. Nếu không còn việc gì làm, fallback về trung tâm
+                        Node fallback = new Node(gameMap.getMapSize() / 2, gameMap.getMapSize() / 2);
+                        String pathFallback = PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, fallback, false);
+                        if (pathFallback != null && !pathFallback.isEmpty()) {
+                            System.out.println("Fallback về trung tâm map");
+                            hero.move(pathFallback.charAt(0) + "");
+                            return;
+                        }
+
+                        System.out.println("Đứng yên - chờ round mới hoặc đã win!");
                     }
+
+
                     // danh nhau - priority == 7
-                    if(currentPriority == 7 && nearPlayer != null){
+                    if (currentPriority == 7 && nearPlayer != null) {
                         System.out.println("Vao cau lenh Hunting");
 
-                        if(targetPlayer!=null){
+                        if (targetPlayer != null) {
                             restrictedNodes.remove(targetPlayer);
                             System.out.println("Player target is: " + targetPlayer.getID());
-                            hero.move(PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,new Node(targetPlayer.getX(), targetPlayer.getY()),false));
-                            System.out.println("the path is: " + PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,new Node(targetPlayer.getX(), targetPlayer.getY()),false));
+                            hero.move(PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, new Node(targetPlayer.getX(), targetPlayer.getY()), false));
+                            System.out.println("the path is: " + PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, new Node(targetPlayer.getX(), targetPlayer.getY()), false));
                         }
-                        if(nearPlayer != null) {
+                        if (nearPlayer != null) {
                             restrictedNodes.remove(nearPlayer);
                             System.out.println("Player target is: " + nearPlayer.getID());
-                            hero.move(PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,new Node(nearPlayer.getX(), nearPlayer.getY()),false));
-                            System.out.println("the path is: " + PathUtils.getShortestPath(gameMap,restrictedNodes,currentNode,new Node(nearPlayer.getX(), nearPlayer.getY()),false));
+                            hero.move(PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, new Node(nearPlayer.getX(), nearPlayer.getY()), false));
+                            System.out.println("the path is: " + PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, new Node(nearPlayer.getX(), nearPlayer.getY()), false));
                         }
                     }
-                    if (currentPriority!=-1) prePriority=currentPriority;
+                    if (currentPriority != -1) prePriority = currentPriority;
 
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -1532,6 +1317,7 @@ public class Main {
         hero.setOnMapUpdate(onMapUpdate);
         hero.start(SERVER_URL);
     }
+
     private static String getCloseCombatDirection(Node playerNode, Node enemyNode) {
         int x = playerNode.getX();
         int y = playerNode.getY();
@@ -1554,6 +1340,7 @@ public class Main {
         }
         return "planB";
     }
+
     private static String getAttackChessDirection(Node playerNode, Node chestNode) {
         int x = playerNode.getX();
         int y = playerNode.getY();
@@ -1604,7 +1391,8 @@ public class Main {
         }
         return "planB";
     }
-    public void getDamageReduction(Player p ){
+
+    public void getDamageReduction(Player p) {
 
     }
 }
