@@ -3,6 +3,7 @@ import io.socket.emitter.Emitter;
 import jsclub.codefest.sdk.Hero;
 import jsclub.codefest.sdk.algorithm.PathUtils;
 import jsclub.codefest.sdk.base.Node;
+import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.GameMap;
 import jsclub.codefest.sdk.model.Inventory;
 import jsclub.codefest.sdk.model.npcs.Enemy;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server.jsclub.dev";
-    private static final String GAME_ID = "108768";
+    private static final String GAME_ID = "158944";
     private static final String PLAYER_NAME = "DomDom";
     private static final String PLAYER_KEY = "sk-5VTDWaBiRSqa2fTy2ZExNw:yj02fPcOBJV30UkGtIdRqmHuvbmpHdrQ-JTsXLyh_QuUZEcvh1OmXjccpXyq-qPUIFMOb8de4mLjt9-S9GH8Fh2tA";
     private static int currentStep = 0;
@@ -1130,54 +1131,46 @@ public class Main {
                     if (currentPriority == 6) {
                         // 1. Nhặt liên tục mọi item tại vị trí hiện tại (kể cả sau phá rương)
                         while (true) {
-                            String currentItemId = gameMap.getElementByIndex(x, y).getId();
-                            String currentItemType = gameMap.getElementByIndex(x, y).getType().name();
-                            System.out.println("Kiểm tra vị trí hiện tại (" + x + "," + y + "): " + currentItemType + " - " + currentItemId + ", hasHead: " + hasHead);
+                            // Lấy phần tử hiện tại
+                            Element item = gameMap.getElementByIndex(x, y);
+                            if (item == null) break; // Nếu không còn item, dừng luôn
+
+                            String currentItemId = item.getId();
+                            String currentItemType = item.getType().name();
                             boolean picked = false;
 
                             if (currentItemType.equalsIgnoreCase("HEALING_ITEM") && NumHeal < 4) {
-                                System.out.println("Nhặt vật phẩm hồi máu tại (" + x + "," + y + "): " + currentItemId);
                                 hero.pickupItem();
                                 IDHealItem[NumHeal++] = currentItemId;
                                 canHeal = true;
                                 picked = true;
                             } else if (currentItemType.equalsIgnoreCase("GUN") && !hasGun) {
-                                System.out.println("Nhặt súng tại (" + x + "," + y + "): " + currentItemId);
                                 hero.pickupItem();
-                                hasGun = true;
-                                canShoot = true;
-                                NumBullet = (currentItemId.equalsIgnoreCase("SCEPTER") || currentItemId.equalsIgnoreCase("RUBBER_GUN") ||
-                                        currentItemId.equalsIgnoreCase("CROSSBOW") || currentItemId.equalsIgnoreCase("SHOTGUN")) ? 5 : 10;
+                                hasGun = true; canShoot = true;
+                                NumBullet = (currentItemId.equalsIgnoreCase("SCEPTER") || currentItemId.equalsIgnoreCase("RUBBER_GUN")
+                                        || currentItemId.equalsIgnoreCase("CROSSBOW") || currentItemId.equalsIgnoreCase("SHOTGUN")) ? 5 : 10;
                                 picked = true;
                             } else if (currentItemType.equalsIgnoreCase("MELEE") && !hasMelee) {
-                                System.out.println("Nhặt vũ khí cận chiến tại (" + x + "," + y + "): " + currentItemId);
                                 hero.pickupItem();
-                                hasMelee = true;
-                                IDCurrentMelee = currentItemId;
-                                picked = true;
+                                hasMelee = true; IDCurrentMelee = currentItemId; picked = true;
                             } else if (currentItemType.equalsIgnoreCase("THROWABLE") && !hasThrow) {
-                                System.out.println("Nhặt vật phẩm ném tại (" + x + "," + y + "): " + currentItemId);
                                 hero.pickupItem();
-                                hasThrow = true;
-                                picked = true;
+                                hasThrow = true; picked = true;
                             } else if (currentItemType.equalsIgnoreCase("ARMOR")) {
-                                System.out.println("Kiểm tra giáp tại (" + x + "," + y + "): " + currentItemId);
-                                if (!hasBody && (currentItemId.equalsIgnoreCase("VEST") || currentItemId.equalsIgnoreCase("ARMOR") ||
-                                        currentItemId.equalsIgnoreCase("MAGIC_ARMOR"))) {
-                                    System.out.println("Nhặt giáp thân tại (" + x + "," + y + "): " + currentItemId);
-                                    hero.pickupItem();
-                                    hasBody = true;
-                                    picked = true;
-                                } else if (!hasHead && (currentItemId.equalsIgnoreCase("WOODEN_HELMET") || currentItemId.equalsIgnoreCase("MAGIC_HELMET") ||
-                                        currentItemId.equalsIgnoreCase("POT") || currentItemId.equalsIgnoreCase("HELMET"))) {
-                                    System.out.println("Nhặt mũ tại (" + x + "," + y + "): " + currentItemId);
+                                if (!hasBody && (currentItemId.equalsIgnoreCase("ARMOR") || currentItemId.equalsIgnoreCase("MAGIC_ARMOR"))) {
+                                    hero.pickupItem(); hasBody = true; picked = true;
+                                }
+                            } else if (currentItemType.equalsIgnoreCase("HELMET")) {
+                                if (!hasHead && (currentItemId.equalsIgnoreCase("WOODEN_HELMET") || currentItemId.equalsIgnoreCase("MAGIC_HELMET"))) {
                                     hero.pickupItem();
                                     hasHead = true;
                                     picked = true;
                                 }
                             }
+                            // Nếu không nhặt được gì thì break để tránh lặp vô hạn
                             if (!picked) break;
                         }
+
 
                         // 2. Nếu còn thiếu bất kỳ đồ nào → ưu tiên loot ngoài map
                         boolean needLoot = (NumHeal < 2) || !hasHead || !hasBody || !hasGun || !hasMelee || !hasThrow;
@@ -1229,7 +1222,7 @@ public class Main {
                             }
                         }
                         if (bestLoot != null && bestPath != null && !bestPath.isEmpty()) {
-                            System.out.println("Move tới vật phẩm/rương " + bestLoot.getX() + "," + bestLoot.getY());
+                            System.out.println("Move tới vật phẩm/rương " + bestLoot.getX() + "," + bestLoot.getY() + ", " + gameMap.getElementByIndex(x, y).getId());
                             hero.move(bestPath.charAt(0) + "");
                             return;
                         }
